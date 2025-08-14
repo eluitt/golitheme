@@ -1,61 +1,48 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-THEME_DIR="themes/golitheme"
-BASE_BRANCH="golitheme"   # معادل develop
+# احترام به ورودی از tasks.json
+DEV_BRANCH="${GN_DEV_BRANCH:-golitheme}"
 
-# پیدا کردن شماره گام بعدی بر اساس تگ‌های step-XX-*
-next_step_number() {
-  local last n
-  last=$(git tag --list 'step-[0-9][0-9]-*' --sort=creatordate | tail -n1 | sed -E 's/^step-([0-9][0-9])-.*/\1/' || true)
-  if [[ -z "${last:-}" ]]; then n=1; else n=$((10#$last + 1)); fi
-  printf "%02d" "${n}"
+feature_start() {
+  local name="${1:-00-tooling}"
+  git fetch --all --tags || true
+  git checkout "${DEV_BRANCH}" 2>/dev/null || git checkout -b "${DEV_BRANCH}"
+  git pull --ff-only || true
+  git checkout -b "feature/${name}" || git checkout "feature/${name}"
+  echo "Started feature/${name} from ${DEV_BRANCH}"
+}
+
+feature_commit() {
+  local msg="${1:-chore: commit}"
+  git add -A
+  git commit -m "${msg}" || echo "nothing to commit"
+  git --no-pager log -1 --oneline
+}
+
+feature_push() {
+  local cur="$(git rev-parse --abbrev-ref HEAD)"
+  git push -u origin "${cur}"
+  git push origin "${DEV_BRANCH}" || true
+  git push --tags || true
+  echo "Pushed ${cur}, ${DEV_BRANCH}, and tags."
+}
+
+step_tag() {
+  local slug="${1:-00-tooling}"
+  local tag="step-${slug}"
+  local cur="$(git rev-parse --abbrev-ref HEAD)"
+  git tag -f "${tag}"
+  git push origin "HEAD:refs/heads/${cur}"
+  git push origin "HEAD:refs/heads/${DEV_BRANCH}" || true
+  git push origin --tags --force
+  echo "Tagged ${tag} and pushed branches."
 }
 
 case "${1:-}" in
-  "feature:start")
-    name="${2:?Usage: steps.sh feature:start <slug>}"
-    git fetch origin --prune
-    git switch "${BASE_BRANCH}" || git switch -c "${BASE_BRANCH}"
-    git pull --ff-only || true
-    git switch -c "feature/${name}"
-    git push -u origin HEAD
-    echo "✅ feature/${name} created & pushed"
-    ;;
-
-  "feature:commit")
-    msg="${2:?Usage: steps.sh feature:commit \"<commit message>\"}"
-    git add "${THEME_DIR}" -A
-    if git diff --cached --quiet; then
-      echo "ℹ️ No staged changes under ${THEME_DIR}"
-    else
-      git commit -m "${msg}"
-      git push
-      echo "✅ committed & pushed"
-    fi
-    ;;
-
-  "step:tag")
-    slug="${2:?Usage: steps.sh step:tag <slug>}"
-    git fetch --tags origin || true
-    step_no=$(next_step_number)
-    stamp=$(date +%Y%m%d-%H%M)
-    tag="step-${step_no}-${slug}-${stamp}"
-    git tag -a "${tag}" -m "Step ${step_no}: ${slug} (${stamp})"
-    git push origin "${tag}"
-    echo "🏷  created tag: ${tag}"
-    ;;
-
-  *)
-    cat <<EOF
-Usage:
-  bash scripts/steps.sh feature:start <slug>
-  bash scripts/steps.sh feature:commit "<commit message>"
-  bash scripts/steps.sh step:tag <slug>
-Notes:
-  - No merges/releases here. Only feature workflow + step tagging.
-  - Tags look like: step-01-header-20250814-1420
-EOF
-    exit 1
-    ;;
+  "feature:start") feature_start "${2:-00-tooling}" ;;
+  "feature:commit") feature_commit "${2:-chore: commit}" ;;
+  "feature:push") feature_push ;;
+  "step:tag") step_tag "${2:-00-tooling}" ;;
+  *) echo "Usage: $0 {feature:start <name>|feature:commit <msg>|feature:push|step:tag <slug>}"; exit 1 ;;
 esac
