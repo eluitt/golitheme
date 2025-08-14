@@ -1,0 +1,120 @@
+# .cursorrules — GoliNaab (v2)
+# Purpose: Generate clean, modular, RTL-first WordPress code for a premium, lightweight site.
+# Cursor MUST: (1) ask clarifying questions, (2) show a diff, (3) wait for human approval,
+#              (4) execute ONE step, (5) report results, (6) commit via Conventional Commits.
+
+──────────────────────────────────────────────────────────────────────────────
+SCOPE & GOALS
+- Non-headless WordPress with light AJAX. React/Preact ONLY if essential, loaded conditionally.
+- Brand: luxurious, feminine, soft—short landing page, flawless mobile UX.
+- Primary language: Persian (RTL). English lives at /en (LTR, courses only).
+
+VERSIONS & BUDGETS
+- PHP 8.2+   · WordPress latest stable (6.4+)   · WooCommerce latest stable
+- Tailwind CSS + PostCSS (purge enabled)
+- Final CSS (critical + non-critical) ≤ 60 KB
+- Critical JS ≤ 120 KB (no heavy third-party; conditional loading)
+- Mobile 4G budgets: LCP < 2.0s · CLS ≤ 0.02 · TBT < 100 ms
+- Lighthouse targets: Performance ≥ 90 · A11y ≥ 95 · Best-Practices ≥ 95 · SEO ≥ 95
+- A11y: WCAG 2.1 AA; visible focus; respect `prefers-reduced-motion`
+
+CODING STANDARDS & NAMING
+- Follow WordPress Coding Standards (WPCS).
+- Functions/variables: snake_case. Classes: StudlyCaps. Files/dirs: lowercase-hyphen.
+- Prefix ALL global symbols with `gn_`. Namespace custom CSS classes with `gn-`.
+- Hooks-first (actions/filters), never modify core. Modular, no global CSS leakage.
+
+STRICT TYPES POLICY
+- Use `declare(strict_types=1);` ONLY in isolated `inc/` classes/modules where inputs are controlled.
+- DO NOT use strict types in templates or broad hook containers.
+
+SECURITY
+- Nonces for ALL forms/AJAX; capability checks on writes.
+- Sanitize input (`sanitize_text_field()`, `wp_kses_post()`, etc.); escape output (`esc_html()`, `esc_attr()`, `esc_url()`).
+- `$wpdb->prepare()` for any custom SQL. Rate-limit public endpoints.
+- Uploads (Laser): allow svg/pdf/dxf/cdr/ai with strict MIME/size checks (no server-side execution).
+
+ARCHITECTURE & ASSETS
+- RTL-first; logical CSS properties (`margin-inline-start`, etc.). `/en` → LTR + English font.
+- `theme.json` controls tokens (colors/typography/radii/shadows).
+- Conditional enqueues; prefer **split + defer/async** over concatenation (HTTP/2/3).
+- No jQuery by default. Modern ES modules only where needed.
+- Avoid `transition-all`; transition only specific props (color, opacity, transform). Durations ≤ 400ms.
+- Use `IntersectionObserver` for in-view behaviors; disable motion under `prefers-reduced-motion`.
+
+DESIGN SYSTEM (BRAND)
+- Colors: lavender matte `#EBDDF9` (hover `#D9C4F3`), gold `#D4AF37` (hover `#B8952D`), white `#FFFFFF`, charcoal `#1C1C1C`.
+- Typography: FA “Doran” (self-host/CDN), EN “Crimson/Crimson Pro”; `font-display: swap`; preconnect where safe.
+- Components: rounded (cards `rounded-3xl`, buttons `rounded-full`), very soft shadows only.
+- Motion: gentle, luxurious; hover with ~±20% luminance & slight lift; no jank.
+
+UI LIBRARIES
+- Slider: **Embla Carousel** (lightweight, dependency-free). Load only on pages that use it (Home).
+- React/Preact: ONLY for unavoidable widgets (e.g., advanced typeahead); isolated bundle; on-demand.
+
+DATA MODEL
+- **Products:** WooCommerce products (collectible flowers). ACF meta (e.g., `gn_collection_name`, `gn_materials`, `gn_limited_edition`, `gn_featured`).
+- **Course (CPT):** ACF (`gn_difficulty_level`, `gn_duration`, `gn_gamification_stage`, `gn_related_product` → Product).
+- **Laser Service (CPT):** ACF (`gn_service_type` [Laser Cutting | Vector Design | Both], `gn_upload_file`, `gn_material`, `gn_dimensions_cm`, `gn_estimated_cost`, `gn_instructions`).
+- **Rental Request (CPT):** MVP intake form (dates, deposit acknowledgement, contact).
+- **ACF JSON:** store definitions in `wp-content/themes/golitheme/acf-json/` and COMMIT to Git.
+
+WOOCOMMERCE (MINIMAL) + MU-PLUGINS RESPECT
+- Respect existing MU-plugins: do NOT re-enable Admin UI, tracking, or WC Blocks assets they intentionally disable.
+- **Shop Context helper (mandatory):** Any Woo-related logic MUST call a shared helper (conceptually `gn_is_shop_context()`) that returns true if:
+  - `is_woocommerce() || is_shop() || is_product() || is_product_taxonomy()` OR
+  - `is_cart() || is_checkout() || is_account_page()` OR
+  - Post has Woo shortcodes (e.g., `products`) OR Woo blocks (`has_block( 'woocommerce/*' )`) OR template renders Woo regions (e.g., mini-cart).
+- Assets policy:
+  - On **non–shop context**, do NOT enqueue Woo assets (`wc-add-to-cart`, cart fragments, WC Blocks vendors/styles).
+  - On **shop context**, enqueue ONLY what the current template needs.
+- Mini-cart rule: If live mini-cart is requested while `wc-cart-fragments` is disabled, use a lightweight REST endpoint + targeted re-render; do NOT globally enable fragments.
+- WC Blocks compatibility: if block-based Cart/Checkout is adopted later, whitelist only required handles for those pages.
+- HPOS compatibility; no direct SQL to orders; Query Monitor MUST be clean (no l10n/dependency warnings).
+
+PREDICTIVE SEARCH (HOME)
+- Scope: **Products + Courses** only on Home.
+- Behavior: debounce ≈ 200ms; min input length = 1; max 5 results/category; highlight matches in output.
+- Accessibility: ARIA roles; keyboard navigation (↑/↓/Enter/Escape); focus management.
+- Security: nonce + rate-limiting; server-side escaping. Short-lived transient cache.
+- Weighting: `featured` > recency > exact title match > partial title > excerpt.
+
+MULTILINGUAL (ROUTE-BASED)
+- Detect `/en` → LTR; English font; **show Courses only** (hide Shop/Rental/Laser).
+- SEO: separate meta/OG; add `hreflang` links; allow path-separated sitemaps.
+- Migration path to Polylang/WPML later if content/SEO demands it.
+
+PERFORMANCE REQUIREMENTS
+- Lazy-load images/video; modern formats (WebP/AVIF) when possible.
+- Optimize queries (avoid N+1). Use transients/object cache where available.
+- Set appropriate browser caching headers for static assets.
+- No console errors; CLS control for injected UI (reserve space).
+
+IRAN-SPECIFIC
+- Prefer self-hosting fonts/assets; avoid blocked CDNs. Expect slower networks → tighter payload budgets.
+- Payment gateways: Zarinpal (IR), YekPay (INTL) planned.
+
+RECOMMENDED STRUCTURE
+- `assets/{styles,scripts,icons}` · `components/` · `templates/` · `inc/` (setup, CPTs, ajax) · `acf-json/`
+- Minimal `functions.php` that boots modules; no logic in template files.
+
+GIT & EXECUTION PROCESS
+- Repos: separate repo for `golitheme` and a site-wide repo; branch `develop` for `wp-content`.
+- **Cursor Composer workflow:**
+  1) Do NOT modify files until a specific step from `instructions.md` is selected.
+  2) Ask questions if anything is ambiguous.
+  3) Show diff of proposed changes → WAIT for explicit approval.
+  4) Execute the step; then output a report (changed files, key decisions, risks, acceptance checks).
+  5) Commit atomically using **Conventional Commits**.
+- Conventional commits examples:
+  - `feat(header): add RTL slide-in menu with focus trap`
+  - `perf(search): debounce typeahead and trim payload under 2 KB`
+  - `fix(wc): dequeue blocks vendors off non-shop pages`
+  - `chore(acf): sync field group definitions to acf-json`
+  - `refactor(theme): extract embla init to isolated module`
+
+ACCEPTANCE (MUST PASS EACH STEP)
+- Diff reviewed and approved; no console errors; no CSS/JS cross-leaks.
+- Budgets respected (CSS/JS size, LCP/CLS/TBT).
+- Keyboard/screen-reader checks pass on interactive components.
+- Query Monitor stays clean (no l10n/dependency or slow queries).

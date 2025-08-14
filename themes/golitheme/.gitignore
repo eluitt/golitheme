@@ -1,0 +1,15 @@
+*.log
+.DS_Store
+Thumbs.db
+node_modules/
+vendor/
+*.log
+.DS_Store
+Thumbs.db
+node_modules/
+vendor/
+# Ignore all uploads
+wp-content/uploads/
+
+eof
+!wp-content/uploads/.gitkeep
