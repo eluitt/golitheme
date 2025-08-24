@@ -6,12 +6,13 @@
 /wflogs/
 /cache/
 /debug.log
+/uploads/
 
 # Ignore entire plugins dir (keep mu-plugins tracked)
 # اگر پلاگین سفارشی داری، پایین‌تر استثنا بگذار.
 plugins/
 
-# Languages (کاملاً نادیده بگیر)
+re# Languages (کاملاً نادیده بگیر)
 languages/
 
 # فقط فایل‌های ریشهٔ wp-content:
@@ -30,6 +31,9 @@ themes/golitheme/assets/build/
 .DS_Store
 Thumbs.db
 
+
 # Env & secrets
 .env
 .env.*
+
+!wp-content/uploads/.gitkeep
