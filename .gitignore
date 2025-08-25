@@ -30,6 +30,7 @@ themes/golitheme/assets/styles/*.map
 # 5) فایل‌های متفرقه و محیطی
 *.log
 *.tmp
+*.zip
 .DS_Store
 Thumbs.db
 node_modules/
