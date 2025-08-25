@@ -9,6 +9,8 @@ wflog/
 wflogs/
 debug.log
 languages/          # فقط languages در ریشه‌ی wp-content؛ زبان‌های تم ربطی ندارند
+.git-rewrite/
+
 
 # 2) پلاگین‌ها: همه Ignore؛ فقط اگر خواستی پلاگین‌های سفارشی‌ات را Whitelist کن
 plugins/
