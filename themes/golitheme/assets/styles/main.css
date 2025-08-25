@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+font-family: "Doran", ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
+html[dir="ltr"] :root {
+font-family: "Crimson Pro", Georgia, "Times New Roman", Times, serif;
+}

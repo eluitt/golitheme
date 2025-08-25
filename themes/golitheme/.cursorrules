@@ -118,3 +118,15 @@ ACCEPTANCE (MUST PASS EACH STEP)
 - Budgets respected (CSS/JS size, LCP/CLS/TBT).
 - Keyboard/screen-reader checks pass on interactive components.
 - Query Monitor stays clean (no l10n/dependency or slow queries).
+
+# --- Run-Step Protocol (Cursor Agent) ---
+وقتی کاربر نوشت: «Step <N> را اجرا کن» یا «Run Step <N>»:
+1) فایل ./instructions.md را باز کن و بخش Step <N> را مرجع قرار بده.
+2) بدون سؤال اضافی (مگر ضروری)، سه فاز را انجام بده:
+   - Plan: طرح تغییرات دقیق (فایل/بخش‌ها).
+   - Apply: اعمال تغییرات در wp-content/themes/golitheme (مگر خلافش گفته شود).
+   - Report: «Files changed / Key decisions / Risks / Acceptance».
+3) بودجه‌های کارایی، A11y، امنیت، RTL-first و نام‌گذاری gn_ را رعایت کن.
+4) npm: در صورت نیاز فقط «npm ci» و «npm run build» را اجرا کن.
+5) از دست‌زدن به هسته‌ی وردپرس و افزونه‌های غیرلازم خودداری کن؛ ACF JSON را در acf-json/ مدیریت کن.
+6) خروجی باید دقیقاً همان گزارش استاندارد پروژه باشد.
