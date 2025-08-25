@@ -14,10 +14,10 @@ feature_start() {
 }
 
 feature_commit() {
-  local msg="${1:-chore: commit}"
+  local msg="${*:-chore: commit}"
   git add -A
-  git commit -m "${msg}" || echo "nothing to commit"
-  git --no-pager log -1 --oneline
+  git commit -m "$msg" || echo "nothing to commit"
+  git --no-pager log -1 --oneline || true
 }
 
 feature_push() {
@@ -39,10 +39,26 @@ step_tag() {
   echo "Tagged ${tag} and pushed branches."
 }
 
-case "${1:-}" in
-  "feature:start") feature_start "${2:-00-tooling}" ;;
-  "feature:commit") feature_commit "${2:-chore: commit}" ;;
-  "feature:push") feature_push ;;
-  "step:tag") step_tag "${2:-00-tooling}" ;;
-  *) echo "Usage: $0 {feature:start <name>|feature:commit <msg>|feature:push|step:tag <slug>}"; exit 1 ;;
+case "${1-}" in
+  "feature:start")
+    shift
+    feature_start "${1:-00-tooling}"
+    ;;
+  "feature:commit")
+    shift
+    # اگر بعد از subcommand یک -- گذاشتیم، بخورَش
+    [ "${1-}" = "--" ] && shift
+    feature_commit "$@"   # تمام بقیهٔ آرگومان‌ها = پیام
+    ;;
+  "feature:push")
+    feature_push
+    ;;
+  "step:tag")
+    shift
+    step_tag "${1:-00-tooling}"
+    ;;
+  *)
+    echo "Usage: $0 {feature:start <name>|feature:commit <msg...>|feature:push|step:tag <slug>}"
+    exit 1
+    ;;
 esac
