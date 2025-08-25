@@ -1,38 +1,37 @@
-# ---- WordPress wp-content (submodule) ----
+# ---- wp-content (submodule) ----
 
-# Backups / logs / caches
-/updraft/
-/wflog/
-/wflogs/
-/cache/
-/debug.log
+# 1) دایرکتوری‌های Runtime/Backup/Log (تو ریپوی گیت نروند)
+uploads/
+upgrade/
+cache/
+updraft/
+wflog/
+wflogs/
+debug.log
+languages/          # فقط languages در ریشه‌ی wp-content؛ زبان‌های تم ربطی ندارند
 
-# Ignore entire plugins dir (keep mu-plugins tracked)
-# اگر پلاگین سفارشی داری، پایین‌تر استثنا بگذار.
-plugins/
+# 2) پلاگین‌ها: همه Ignore؛ فقط اگر خواستی پلاگین‌های سفارشی‌ات را Whitelist کن
+plugins/**
+# نمونه‌ی وایت‌لیست (در صورت نیاز، علامت # را بردار):
+# !plugins/golinaab-*/
+# !plugins/golinaab-*/**
 
-# Languages (کاملاً نادیده بگیر)
-languages/
-
-# فقط فایل‌های ریشهٔ wp-content:
-# (index.php های داخل تم/پلاگین‌ها نادیده نمی‌شوند)
-#/woocommerce-strip.php اگر اشتباه تایپی نیست
-/woocommerce-strip.php
-/index.php
-
-# Theme build artifacts
+# 3) تم‌ها: فقط golitheme را Track کن، بقیه Ignore
+themes/**
+!themes/golitheme/**
+# آرتیفکت‌های بیلد تم (فایل بیلد CSS را Track نگه می‌داریم)
 themes/golitheme/node_modules/
-themes/golitheme/assets/build/
+themes/golitheme/assets/styles/*.map
 
-# Common junk
+# 4) فایل‌های ریشه‌ی wp-content
+/index.php
+/woocommerce-strip.php
+
+# 5) فایل‌های متفرقه و محیطی
 *.log
 *.tmp
-*.zip
 .DS_Store
 Thumbs.db
 node_modules/
-vendor/
-
-# Env & secrets
 .env
 .env.*
