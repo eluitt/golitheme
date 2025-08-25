@@ -11,7 +11,7 @@ debug.log
 languages/          # فقط languages در ریشه‌ی wp-content؛ زبان‌های تم ربطی ندارند
 
 # 2) پلاگین‌ها: همه Ignore؛ فقط اگر خواستی پلاگین‌های سفارشی‌ات را Whitelist کن
-plugins/ل
+plugins/
 # نمونه‌ی وایت‌لیست (در صورت نیاز، علامت # را بردار):
 # !plugins/golinaab-*/
 # !plugins/golinaab-*/**
