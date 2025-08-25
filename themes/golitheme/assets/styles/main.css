@@ -8,3 +8,6 @@ font-family: "Doran", ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helv
 html[dir="ltr"] :root {
 font-family: "Crimson Pro", Georgia, "Times New Roman", Times, serif;
 }
+
+/* Container utility since Tailwind's container core plugin is disabled */
+.gn-container { @apply gn-mx-auto gn-max-w-[1200px] gn-px-4; }

@@ -25,5 +25,17 @@ return '<script src="' . esc_url( $src ) . '" defer></script>';
 }
 return $tag;
 }, 10, 3 );
+		wp_localize_script( 'gn-frontend', 'gnSearch', [
+			'restUrl' => esc_url_raw( rest_url( 'gn/v1/search' ) ),
+			'nonce'   => wp_create_nonce( 'wp_rest' ),
+			'isHome'  => true,
+			'i18n'    => [
+				'products'    => __( 'محصولات', 'golitheme' ),
+				'courses'     => __( 'دوره‌ها', 'golitheme' ),
+				'viewAll'     => __( 'مشاهده همه', 'golitheme' ),
+				'noResults'   => __( 'موردی یافت نشد', 'golitheme' ),
+				'placeholder' => __( 'جستجو...', 'golitheme' ),
+			],
+		] );
 }
 }
