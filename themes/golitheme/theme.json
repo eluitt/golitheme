@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 2,
+  "settings": {
+    "layout": { "contentSize": "720px", "wideSize": "1200px" },
+    "typography": {
+      "fluid": true,
+      "fontFamilies": [
+        {
+          "slug": "doran-fa",
+          "name": "Doran (FA)",
+          "fontFamily": "Doran, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif"
+        },
+        {
+          "slug": "crimson-en",
+          "name": "Crimson (EN)",
+          "fontFamily": "Crimson Pro, Georgia, 'Times New Roman', Times, serif"
+        }
+      ]
+    },
+    "color": {
+      "palette": [
+        { "slug": "lavender", "color": "#EBDDF9", "name": "Lavender" },
+        { "slug": "gold", "color": "#D4AF37", "name": "Gold" },
+        { "slug": "charcoal", "color": "#1C1C1C", "name": "Charcoal" },
+        { "slug": "white", "color": "#FFFFFF", "name": "White" }
+      ]
+    }
+  },
+  "styles": {
+    "typography": { "fontFamily": "var(--wp--preset--font-family--doran-fa)" },
+    "elements": {
+      "link": { "color": { "text": "var(--wp--preset--color--gold)" } }
+    }
+  }
+}
