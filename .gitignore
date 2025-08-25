@@ -1,2 +1,38 @@
+# ---- WordPress wp-content (submodule) ----
+
+# Backups / logs / caches
+/updraft/
+/wflog/
+/wflogs/
+/cache/
+/debug.log
+
+# Ignore entire plugins dir (keep mu-plugins tracked)
+# اگر پلاگین سفارشی داری، پایین‌تر استثنا بگذار.
+plugins/
+
+# Languages (کاملاً نادیده بگیر)
+languages/
+
+# فقط فایل‌های ریشهٔ wp-content:
+# (index.php های داخل تم/پلاگین‌ها نادیده نمی‌شوند)
+#/woocommerce-strip.php اگر اشتباه تایپی نیست
+/woocommerce-strip.php
+/index.php
+
+# Theme build artifacts
+themes/golitheme/node_modules/
+themes/golitheme/assets/build/
+
+# Common junk
+*.log
+*.tmp
+*.zip
+.DS_Store
+Thumbs.db
 node_modules/
-assets/styles/*.map
+vendor/
+
+# Env & secrets
+.env
+.env.*
